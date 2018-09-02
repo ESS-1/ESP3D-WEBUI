@@ -121,6 +121,10 @@ function control_motorsOff(){
     SendPrinterCommand(command, true);
 }
 
+function control_resetPrinter(){
+    SendPrinterCommand("[ESP450]", false);
+}
+
 function SendHomecommand (cmd){
      SendPrinterCommand(cmd, true, get_Position);
 }

@@ -200,33 +200,46 @@ function setting_check_value(value, index){
 function process_settings_answer(response_text) {
     var result= true;
     try {
-     var response = JSON.parse(response_text);
-     if(typeof response.EEPROM == 'undefined') {
-         result = false;
-         console.log('No EEPROM');
+        var response = JSON.parse(response_text);
+        if (typeof response.EEPROM == 'undefined') {
+            result = false;
+            console.log('No EEPROM');
         }
-    else {
-             //console.log("EEPROM has " + response.EEPROM.length + " entries");
-             if (response.EEPROM.length > 0) {
+        else {
+            //console.log("EEPROM has " + response.EEPROM.length + " entries");
+            if (response.EEPROM.length > 0) {
                 var vindex = 0;
                 for (var i = 0; i < response.EEPROM.length ; i++) {
                     vindex = create_setting_entry(response.EEPROM[i], vindex);
-                    
-                    }
+                }
                 if (vindex > 0 ) {
                     if (setup_is_done)build_HTML_setting_list(current_setting_filter);
                     update_UI_setting();
-                    }
-                else result = false;
                 }
                 else result = false;
             }
+            else result = false;
+        }
+        if (typeof response.Hardware !== 'undefined') {
+            update_hardware_dependent_UI(response.Hardware);
+        }
     }
     catch (e) {
         console.error("Parsing error:", e); 
-         result= false;
+        result= false;
     }
     return result;
+}
+
+function update_hardware_dependent_UI(hardware) {
+    if (typeof hardware.PrinterReset !== 'undefined' &&
+        parseInt(hardware.PrinterReset) > 0) {
+        document.getElementById('reset_printer_button').style.display='initial';
+    }
+    if (typeof hardware.PrinterPortSwitch !== 'undefined' &&
+        parseInt(hardware.PrinterPortSwitch) > 0) {
+//TODO:        document.getElementById('reset_printer_button').style.display='block';
+    }
 }
 
 function create_setting_entry(sentry, vindex){
